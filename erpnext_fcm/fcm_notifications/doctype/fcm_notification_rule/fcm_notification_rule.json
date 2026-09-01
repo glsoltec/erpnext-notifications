@@ -63,7 +63,7 @@
  "istable_parent": "FCM Settings",
  "links": [],
  "modified": "2026-09-01 00:00:00.000000",
- "module": "FCM Notifications",
+ "module": "fcm_notifications",
  "name": "FCM Notification Rule",
  "owner": "Administrator"
 }

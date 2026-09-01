@@ -1,1 +1,1 @@
-FCM Notifications
+fcm_notifications
