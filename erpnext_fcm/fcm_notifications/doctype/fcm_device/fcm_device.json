@@ -1,0 +1,107 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2026-09-01 00:00:00.000000",
+ "doctype": "FCM Device",
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "device_type",
+  "token",
+  "is_active",
+  "last_seen",
+  "app_version",
+  "user_agent",
+  "sb_status",
+  "last_error"
+ ],
+ "fields": [
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "Usuário",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "device_type",
+   "fieldtype": "Select",
+   "label": "Tipo de dispositivo",
+   "options": "Android\niOS\nWeb\nOther",
+   "default": "Android"
+  },
+  {
+   "fieldname": "token",
+   "fieldtype": "Data",
+   "label": "Token FCM",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Ativo",
+   "default": "1"
+  },
+  {
+   "fieldname": "last_seen",
+   "fieldtype": "Datetime",
+   "label": "Última atividade"
+  },
+  {
+   "fieldname": "app_version",
+   "fieldtype": "Data",
+   "label": "Versão do app"
+  },
+  {
+   "fieldname": "user_agent",
+   "fieldtype": "Text",
+   "label": "User Agent"
+  },
+  {
+   "fieldname": "sb_status",
+   "fieldtype": "Section Break",
+   "label": "Status"
+  },
+  {
+   "fieldname": "last_error",
+   "fieldtype": "Text",
+   "label": "Último erro"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-01 00:00:00.000000",
+ "module": "FCM Notifications",
+ "name": "FCM Device",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "export": 0,
+   "print": 0,
+   "read": 1,
+   "report": 0,
+   "role": "All",
+   "share": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from typing import Any
 
 import frappe
@@ -103,6 +104,39 @@ def send_notification(
 
     users = recipients if isinstance(recipients, list) else [recipients]
     return services.send_to_users(users, title, body, data=data, image=image, enqueue=enqueue)
+
+
+# ---------------------------------------------------------------------------
+# Web / PWA (navegador)
+# ---------------------------------------------------------------------------
+@frappe.whitelist()
+def get_web_config() -> dict:
+    """Retorna o firebaseConfig + VAPID public key para o SDK web do navegador."""
+    settings = frappe.get_cached_doc("FCM Settings")
+    if not settings.enable_fcm:
+        frappe.throw(_("Push no navegador (Web/PWA) nao habilitado em FCM Settings."))
+    if not settings.fcm_web_config or not settings.fcm_vapid_public_key:
+        frappe.throw(
+            _("Configure 'Firebase Web Config' e 'VAPID Public Key' em FCM Settings (secao Web/PWA).")
+        )
+    try:
+        config = json.loads(settings.fcm_web_config)
+    except (json.JSONDecodeError, TypeError):
+        frappe.throw(_("Firebase Web Config em FCM Settings nao e um JSON valido."))
+        config = {}
+    return {"config": config, "vapid_public_key": settings.fcm_vapid_public_key}
+
+
+@frappe.whitelist()
+def subscribe(fcm_token: str) -> dict:
+    """Registra o navegador do usuario logado para receber push (device_type='Web')."""
+    return register_device(token=fcm_token, device_type="Web", user_agent="PWA")
+
+
+@frappe.whitelist()
+def unsubscribe(fcm_token: str) -> dict:
+    """Desativa o token web do usuario logado."""
+    return unregister_device(token=fcm_token)
 
 
 @frappe.whitelist()

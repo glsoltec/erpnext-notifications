@@ -13,6 +13,8 @@ conta de serviço (OAuth2). Simples, prático e de fácil manutenção.
 - **Tratamento de token inválido**: desativa automaticamente dispositivos com token vencido.
 - **Tarefas agendadas**: reenvio de falhas temporárias e limpeza de logs/dispositivos antigos.
 - **Botão "Testar conexão"** no FCM Settings para validar o service account.
+- **Web/PWA no navegador**: service worker (`/sw.js`), manifest (`/manifest.json`), push no navegador
+  (FCM Web) e relay das notificações nativas do ERPNext (`Notification Log`) para push.
 
 ## Requisitos
 
@@ -39,7 +41,7 @@ bench build
 bench restart
 ```
 
-> Se preferir, use `bench get-app https://github.com/glsoltec/erpnext_fcm.git`.
+> Se preferir, use `bench get-app https://github.com/glsoltec/erpnext_fcm.git` (branch `version-16`).
 
 ## Configuração
 
@@ -51,6 +53,26 @@ bench restart
    - Cole o conteúdo do JSON da conta de serviço em **Service Account JSON**.
    - O **Project ID** é preenchido automaticamente.
    - Clique em **Testar conexão** (botão "Firebase") para validar.
+
+### Push no navegador (Web/PWA)
+
+No Firebase console: _Configurações do projeto > Seus apps > App da Web_ (crie um se não houver)
+e copie o objeto `firebaseConfig`. Em **Cloud Messaging > Web Push certificates** copie a
+**chave pública** (VAPID).
+
+No `FCM Settings`, seção **Web/PWA (navegador)**:
+
+- **Habilitar push no navegador (Web/PWA)**: ligar.
+- **Firebase Web Config**: cole o `firebaseConfig` como JSON (apiKey, authDomain, projectId,
+  storageBucket, messagingSenderId, appId).
+- **VAPID Public Key**: cole a chave pública do Web Push.
+
+Na seção **Manifest (PWA)** configure nome, cores, start_url, e em **Ícones do PWA** adicione
+um ícone (recomendado 512x512 PNG em `/files/...`).
+
+> O app injeta o `<link rel="manifest">`, registra o service worker em `/sw.js` e envia o token
+> do navegador para o `FCM Device` (device_type `Web`) automaticamente no Desk. As notificações
+> nativas do ERPNext (`Notification Log`) são repassadas como push para o destinatário.
 
 ## Uso
 
@@ -119,16 +141,20 @@ services.send_to_user(
 
 ```
 erpnext_fcm/
-├── hooks.py            # doc_events, scheduler_events, app meta
-├── api.py              # endpoints whitelisted (dispositivo + envio + teste)
+├── hooks.py            # doc_events, scheduler_events, app meta, app_include_js
+├── api.py              # endpoints whitelisted (dispositivo + envio + teste + web)
 ├── services.py         # orquestracao de envio + log + tratamento de token invalido
-├── methods.py          # motor de regras de evento (Jinja)
+├── methods.py          # motor de regras de evento (Jinja) + relay do Notification Log
 ├── scheduler.py        # reenvio e limpeza agendada
 ├── firebase/client.py  # cliente FCM v1 (OAuth2 + HTTP v1)
+├── public/js/fcm_web.js # registro de push no navegador (Web/PWA)
+├── www/sw.js           # service worker em /sw.js
+├── www/manifest.json   # manifest PWA em /manifest.json
 └── fcm_notifications/doctype/
-    ├── fcm_settings/           # Single de configuracao
-    ├── fcm_device/             # dispositivo por usuario
+    ├── fcm_settings/           # Single de configuracao (server + web/PWA + manifest)
+    ├── fcm_device/             # dispositivo por usuario (mobile + web)
     ├── fcm_notification_rule/  # regra filha (evento -> Jinja)
+    ├── fcm_pwa_icon/           # icones do manifest PWA
     └── fcm_notification_log/   # historico de envios
 ```
 

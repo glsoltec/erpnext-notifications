@@ -1,0 +1,43 @@
+{
+ "actions": [],
+ "creation": "2026-09-01 00:00:00.000000",
+ "doctype": "FCM PWA Icon",
+ "engine": "InnoDB",
+ "field_order": [
+  "src",
+  "sizes",
+  "type"
+ ],
+ "fields": [
+  {
+   "fieldname": "src",
+   "fieldtype": "Data",
+   "label": "URL da imagem",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "URL pública do ícone (recomendado 512x512 PNG). Ex.: /files/logo-512.png"
+  },
+  {
+   "fieldname": "sizes",
+   "fieldtype": "Data",
+   "label": "Tamanhos",
+   "default": "512x512",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "label": "Tipo",
+   "options": "image/png\nimage/svg+xml\nimage/x-icon",
+   "default": "image/png",
+   "in_list_view": 1
+  }
+ ],
+ "istable": 1,
+ "istable_parent": "FCM Settings",
+ "links": [],
+ "modified": "2026-09-01 00:00:00.000000",
+ "module": "FCM Notifications",
+ "name": "FCM PWA Icon",
+ "owner": "Administrator"
+}

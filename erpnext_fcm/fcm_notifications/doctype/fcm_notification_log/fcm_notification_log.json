@@ -1,0 +1,122 @@
+{
+ "actions": [],
+ "creation": "2026-09-01 00:00:00.000000",
+ "doctype": "FCM Notification Log",
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "body",
+  "user",
+  "device",
+  "token",
+  "data_payload",
+  "sb_status",
+  "status",
+  "fcm_message_id",
+  "error_message",
+  "retry_count",
+  "send_time"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Título",
+   "in_list_view": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "body",
+   "fieldtype": "Text",
+   "label": "Mensagem"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "Usuário",
+   "options": "User"
+  },
+  {
+   "fieldname": "device",
+   "fieldtype": "Link",
+   "label": "Dispositivo",
+   "options": "FCM Device"
+  },
+  {
+   "fieldname": "token",
+   "fieldtype": "Data",
+   "label": "Token FCM"
+  },
+  {
+   "fieldname": "data_payload",
+   "fieldtype": "Code",
+   "options": "JSON",
+   "label": "Dados (payload)"
+  },
+  {
+   "fieldname": "sb_status",
+   "fieldtype": "Section Break",
+   "label": "Status"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Queued\nSent\nFailed",
+   "default": "Queued",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "fcm_message_id",
+   "fieldtype": "Data",
+   "label": "FCM Message ID"
+  },
+  {
+   "fieldname": "error_message",
+   "fieldtype": "Text",
+   "label": "Mensagem de erro"
+  },
+  {
+   "fieldname": "retry_count",
+   "fieldtype": "Int",
+   "label": "Tentativas",
+   "default": "0"
+  },
+  {
+   "fieldname": "send_time",
+   "fieldtype": "Datetime",
+   "label": "Enviado em"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-01 00:00:00.000000",
+ "module": "FCM Notifications",
+ "name": "FCM Notification Log",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "export": 0,
+   "print": 0,
+   "read": 1,
+   "report": 0,
+   "role": "All",
+   "share": 0
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

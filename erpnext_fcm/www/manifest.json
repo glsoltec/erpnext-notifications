@@ -1,0 +1,13 @@
+{
+  "name": "{{ app_name }}",
+  "short_name": "{{ app_short_name }}",
+  "description": "{{ app_description }}",
+  "theme_color": "{{ theme_color }}",
+  "background_color": "{{ background_color }}",
+  "start_url": "{{ start_url }}",
+  "scope": "{{ app_scope }}",
+  "display": "{{ display }}",
+  "orientation": "{{ orientation }}",
+  "lang": "{{ lang }}",
+  "icons": {{ icons }}
+}

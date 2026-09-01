@@ -4,8 +4,44 @@ import json
 
 import frappe
 from frappe import _
+from frappe.utils import get_url, strip_html
 
 from erpnext_fcm import services
+
+
+def send_notification_log_push(doc, method=None):
+    """Relay das notificacoes nativas do ERPNext (Notification Log) para push.
+
+    Registrado em hooks.py em doc_events['Notification Log']['after_insert'].
+    O `for_user` recebe a notificacao em todos os seus dispositivos ativos (Web e mobile).
+    """
+    settings = frappe.get_cached_doc("FCM Settings")
+    if not settings.enabled or not settings.enable_fcm:
+        return
+    if not doc.for_user:
+        return
+
+    title = _notification_title(doc)
+    body = strip_html(doc.subject or "")[:200]
+    data = {"type": doc.type or "", "subject": body}
+    if doc.link:
+        data["click_action"] = get_url(doc.link)
+
+    try:
+        services.send_to_user(doc.for_user, title, body=body, data=data, enqueue=True)
+    except Exception:
+        frappe.log_error(frappe.get_traceback(), "FCM: relay de Notification Log")
+
+
+def _notification_title(doc) -> str:
+    titles = {
+        "Mention": _("New Mention"),
+        "Assignment": _("Assignment Update"),
+        "Share": _("Document Shared With You"),
+        "Energy Point": _("Energy Point Update"),
+        "Alert": _("Alert"),
+    }
+    return titles.get(doc.type) or _("New Notification")
 
 
 def handle_doc_event(doc, method: str):

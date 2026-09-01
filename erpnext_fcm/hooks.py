@@ -16,7 +16,9 @@ required_apps = ["frappe"]
 # ---------------------------------------------------------------------------
 # Permissoes de acesso a pacotes
 # ---------------------------------------------------------------------------
-app_include_js = []
+app_include_js = [
+    "fcm_web.js",
+]
 
 # ---------------------------------------------------------------------------
 # DocTypes e modulos
@@ -48,6 +50,9 @@ doc_events = {
     },
     "ToDo": {
         "after_insert": "erpnext_fcm.methods.handle_doc_event",
+    },
+    "Notification Log": {
+        "after_insert": "erpnext_fcm.methods.send_notification_log_push",
     },
 }
 

@@ -1,5 +1,5 @@
-# Credenciais Firebase - NUNCA versionar
-*.json
+# Credenciais Firebase - NUNCA versionar (apenas o service account JSON)
+*firebase-adminsdk*.json
 
 # Python
 __pycache__/
