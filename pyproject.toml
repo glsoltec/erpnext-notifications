@@ -14,4 +14,4 @@ requires = ["flit_core"]
 build-backend = "flit_core.buildapi"
 
 [project.urls]
-Repository = "https://github.com/glsoltec/erpnext-fcm"
+Repository = "https://github.com/glsoltec/erpnext_fcm"

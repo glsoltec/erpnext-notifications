@@ -39,7 +39,7 @@ bench build
 bench restart
 ```
 
-> Se preferir, use `bench get-app https://github.com/glsoltec/erpnext-fcm.git`.
+> Se preferir, use `bench get-app https://github.com/glsoltec/erpnext_fcm.git`.
 
 ## Configuração
 
