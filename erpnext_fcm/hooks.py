@@ -9,7 +9,7 @@ app_color = "blue"
 app_email = "contato@glsoltec.com.br"
 app_license = "MIT"
 app_version = "0.1.0"
-app_url = "https://github.com/glsoltec/erpnext-fcm"
+app_url = "https://github.com/glsoltec/erpnext_fcm"
 
 required_apps = ["frappe"]
 

@@ -1,5 +1,5 @@
 [project]
-name = "erpnext-fcm"
+name = "erpnext_fcm"
 version = "0.1.0"
 description = "Envio de notificacoes push no ERPNext via Firebase Cloud Messaging (FCM v1)."
 authors = [{ name = "GL SOLTEC", email = "contato@glsoltec.com.br" }]
