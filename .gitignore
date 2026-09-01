@@ -1,0 +1,19 @@
+# Credenciais Firebase - NUNCA versionar
+*.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+.env
+.venv/
+venv/
+
+# Frappe / Bench
+node_modules/
+sites/
+assets/
+*.log
