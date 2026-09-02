@@ -1,221 +1,221 @@
 {
- "actions": [],
- "creation": "2026-09-01 00:00:00.000000",
- "doctype": "FCM Settings",
- "engine": "InnoDB",
- "field_order": [
-  "enabled",
-  "service_account_json",
-  "project_id",
-  "sb_general",
-  "default_title",
-  "batch_size",
-  "log_enabled",
-  "auto_remove_invalid",
-  "retention_days",
-  "sb_web",
-  "enable_fcm",
-  "fcm_web_config",
-  "fcm_vapid_public_key",
-  "sb_manifest",
-  "manifest_name",
-  "manifest_short_name",
-  "manifest_description",
-  "manifest_theme_color",
-  "manifest_background_color",
-  "manifest_start_url",
-  "manifest_scope",
-  "manifest_display",
-  "manifest_orientation",
-  "sb_manifest_icons",
-  "pwa_icons",
-  "sb_rules",
-  "notification_rules"
- ],
- "fields": [
-  {
-   "fieldname": "enabled",
-   "fieldtype": "Check",
-   "label": "Habilitar notificações",
-   "default": "0"
-  },
-  {
-   "fieldname": "service_account_json",
-   "fieldtype": "Code",
-   "options": "JSON",
-   "label": "Service Account JSON",
-   "reqd": 1,
-   "description": "Cole aqui o conteúdo completo do arquivo JSON da conta de serviço do Firebase (Projeto > Configurações > Contas de serviço > Gerar nova chave privada)."
-  },
-  {
-   "fieldname": "project_id",
-   "fieldtype": "Data",
-   "label": "Project ID (Firebase)",
-   "description": "Preenchido automaticamente a partir do service account se deixado em branco.",
-   "read_only": 1
-  },
-  {
-   "fieldname": "sb_general",
-   "fieldtype": "Section Break",
-   "label": "Configurações Gerais"
-  },
-  {
-   "fieldname": "default_title",
-   "fieldtype": "Data",
-   "label": "Título padrão",
-   "description": "Usado quando a notificação não informa um título."
-  },
-  {
-   "fieldname": "batch_size",
-   "fieldtype": "Int",
-   "label": "Tamanho do lote",
-   "default": "100",
-   "description": "Número de tokens processados por lote no envio em massa."
-  },
-  {
-   "fieldname": "log_enabled",
-   "fieldtype": "Check",
-   "label": "Gravar log de notificações",
-   "default": "1"
-  },
-  {
-   "fieldname": "auto_remove_invalid",
-   "fieldtype": "Check",
-   "label": "Desativar tokens inválidos automaticamente",
-   "default": "1"
-  },
-  {
-   "fieldname": "retention_days",
-   "fieldtype": "Int",
-   "label": "Retenção de logs (dias)",
-   "default": "90"
-  },
-  {
-   "fieldname": "sb_web",
-   "fieldtype": "Section Break",
-   "label": "Web / PWA (navegador)"
-  },
-  {
-   "fieldname": "enable_fcm",
-   "fieldtype": "Check",
-   "label": "Habilitar push no navegador (Web/PWA)",
-   "default": "0",
-   "description": "Ativa o service worker, o manifest e o registro de dispositivos Web."
-  },
-  {
-   "fieldname": "fcm_web_config",
-   "fieldtype": "Code",
-   "options": "JSON",
-   "label": "Firebase Web Config",
-   "description": "Objeto firebaseConfig do console Firebase (Configurações do projeto > Seus apps > App da Web): apiKey, authDomain, projectId, storageBucket, messagingSenderId e appId."
-  },
-  {
-   "fieldname": "fcm_vapid_public_key",
-   "fieldtype": "Data",
-   "label": "VAPID Public Key (Web Push)",
-   "description": "Chave pública do certificado Web Push (Cloud Messaging > Web Push certificates)."
-  },
-  {
-   "fieldname": "sb_manifest",
-   "fieldtype": "Section Break",
-   "label": "Manifest (PWA)"
-  },
-  {
-   "fieldname": "manifest_name",
-   "fieldtype": "Data",
-   "label": "Nome do app (manifest)"
-  },
-  {
-   "fieldname": "manifest_short_name",
-   "fieldtype": "Data",
-   "label": "Nome curto"
-  },
-  {
-   "fieldname": "manifest_description",
-   "fieldtype": "Text",
-   "label": "Descrição"
-  },
-  {
-   "fieldname": "manifest_theme_color",
-   "fieldtype": "Data",
-   "label": "Cor do tema",
-   "default": "#2490EF"
-  },
-  {
-   "fieldname": "manifest_background_color",
-   "fieldtype": "Data",
-   "label": "Cor de fundo",
-   "default": "#FFFFFF"
-  },
-  {
-   "fieldname": "manifest_start_url",
-   "fieldtype": "Data",
-   "label": "Start URL",
-   "default": "/app"
-  },
-  {
-   "fieldname": "manifest_scope",
-   "fieldtype": "Data",
-   "label": "Scope",
-   "default": "/"
-  },
-  {
-   "fieldname": "manifest_display",
-   "fieldtype": "Select",
-   "label": "Display",
-   "options": "standalone\nfullscreen\nminimal-ui\nbrowser",
-   "default": "standalone"
-  },
-  {
-   "fieldname": "manifest_orientation",
-   "fieldtype": "Select",
-   "label": "Orientação",
-   "options": "\nportrait\nlandscape\nany",
-   "default": "portrait"
-  },
-  {
-   "fieldname": "sb_manifest_icons",
-   "fieldtype": "Section Break",
-   "label": "Ícones do PWA"
-  },
-  {
-   "fieldname": "pwa_icons",
-   "fieldtype": "Table",
-   "label": "Ícones",
-   "options": "FCM PWA Icon"
-  },
-  {
-   "fieldname": "sb_rules",
-   "fieldtype": "Section Break",
-   "label": "Notificações Automáticas por Evento"
-  },
-  {
-   "fieldname": "notification_rules",
-   "fieldtype": "Table",
-   "label": "Regras de Notificação",
-   "options": "FCM Notification Rule"
-  }
- ],
- "issingle": 1,
- "istable": 0,
- "links": [],
- "modified": "2026-09-01 00:00:00.000000",
- "module": "fcm_notifications",
- "name": "FCM Settings",
- "owner": "Administrator",
- "permissions": [
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "role": "System Manager",
-   "share": 1,
-   "write": 1
-  }
- ],
- "sort_field": "modified",
- "sort_order": "DESC",
- "track_changes": 1
+  "actions": [],
+  "creation": "2026-09-01 00:00:00.000000",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "enabled",
+    "service_account_json",
+    "project_id",
+    "sb_general",
+    "default_title",
+    "batch_size",
+    "log_enabled",
+    "auto_remove_invalid",
+    "retention_days",
+    "sb_web",
+    "enable_fcm",
+    "fcm_web_config",
+    "fcm_vapid_public_key",
+    "sb_manifest",
+    "manifest_name",
+    "manifest_short_name",
+    "manifest_description",
+    "manifest_theme_color",
+    "manifest_background_color",
+    "manifest_start_url",
+    "manifest_scope",
+    "manifest_display",
+    "manifest_orientation",
+    "sb_manifest_icons",
+    "pwa_icons",
+    "sb_rules",
+    "notification_rules"
+  ],
+  "fields": [
+    {
+      "fieldname": "enabled",
+      "fieldtype": "Check",
+      "label": "Habilitar notificações",
+      "default": "0"
+    },
+    {
+      "fieldname": "service_account_json",
+      "fieldtype": "Code",
+      "options": "JSON",
+      "label": "Service Account JSON",
+      "reqd": 1,
+      "description": "Cole aqui o conteúdo completo do arquivo JSON da conta de serviço do Firebase (Projeto > Configurações > Contas de serviço > Gerar nova chave privada)."
+    },
+    {
+      "fieldname": "project_id",
+      "fieldtype": "Data",
+      "label": "Project ID (Firebase)",
+      "description": "Preenchido automaticamente a partir do service account se deixado em branco.",
+      "read_only": 1
+    },
+    {
+      "fieldname": "sb_general",
+      "fieldtype": "Section Break",
+      "label": "Configurações Gerais"
+    },
+    {
+      "fieldname": "default_title",
+      "fieldtype": "Data",
+      "label": "Título padrão",
+      "description": "Usado quando a notificação não informa um título."
+    },
+    {
+      "fieldname": "batch_size",
+      "fieldtype": "Int",
+      "label": "Tamanho do lote",
+      "default": "100",
+      "description": "Número de tokens processados por lote no envio em massa."
+    },
+    {
+      "fieldname": "log_enabled",
+      "fieldtype": "Check",
+      "label": "Gravar log de notificações",
+      "default": "1"
+    },
+    {
+      "fieldname": "auto_remove_invalid",
+      "fieldtype": "Check",
+      "label": "Desativar tokens inválidos automaticamente",
+      "default": "1"
+    },
+    {
+      "fieldname": "retention_days",
+      "fieldtype": "Int",
+      "label": "Retenção de logs (dias)",
+      "default": "90"
+    },
+    {
+      "fieldname": "sb_web",
+      "fieldtype": "Section Break",
+      "label": "Web / PWA (navegador)"
+    },
+    {
+      "fieldname": "enable_fcm",
+      "fieldtype": "Check",
+      "label": "Habilitar push no navegador (Web/PWA)",
+      "default": "0",
+      "description": "Ativa o service worker, o manifest e o registro de dispositivos Web."
+    },
+    {
+      "fieldname": "fcm_web_config",
+      "fieldtype": "Code",
+      "options": "JSON",
+      "label": "Firebase Web Config",
+      "description": "Objeto firebaseConfig do console Firebase (Configurações do projeto > Seus apps > App da Web): apiKey, authDomain, projectId, storageBucket, messagingSenderId e appId."
+    },
+    {
+      "fieldname": "fcm_vapid_public_key",
+      "fieldtype": "Data",
+      "label": "VAPID Public Key (Web Push)",
+      "description": "Chave pública do certificado Web Push (Cloud Messaging > Web Push certificates)."
+    },
+    {
+      "fieldname": "sb_manifest",
+      "fieldtype": "Section Break",
+      "label": "Manifest (PWA)"
+    },
+    {
+      "fieldname": "manifest_name",
+      "fieldtype": "Data",
+      "label": "Nome do app (manifest)"
+    },
+    {
+      "fieldname": "manifest_short_name",
+      "fieldtype": "Data",
+      "label": "Nome curto"
+    },
+    {
+      "fieldname": "manifest_description",
+      "fieldtype": "Text",
+      "label": "Descrição"
+    },
+    {
+      "fieldname": "manifest_theme_color",
+      "fieldtype": "Data",
+      "label": "Cor do tema",
+      "default": "#2490EF"
+    },
+    {
+      "fieldname": "manifest_background_color",
+      "fieldtype": "Data",
+      "label": "Cor de fundo",
+      "default": "#FFFFFF"
+    },
+    {
+      "fieldname": "manifest_start_url",
+      "fieldtype": "Data",
+      "label": "Start URL",
+      "default": "/app"
+    },
+    {
+      "fieldname": "manifest_scope",
+      "fieldtype": "Data",
+      "label": "Scope",
+      "default": "/"
+    },
+    {
+      "fieldname": "manifest_display",
+      "fieldtype": "Select",
+      "label": "Display",
+      "options": "standalone\nfullscreen\nminimal-ui\nbrowser",
+      "default": "standalone"
+    },
+    {
+      "fieldname": "manifest_orientation",
+      "fieldtype": "Select",
+      "label": "Orientação",
+      "options": "\nportrait\nlandscape\nany",
+      "default": "portrait"
+    },
+    {
+      "fieldname": "sb_manifest_icons",
+      "fieldtype": "Section Break",
+      "label": "Ícones do PWA"
+    },
+    {
+      "fieldname": "pwa_icons",
+      "fieldtype": "Table",
+      "label": "Ícones",
+      "options": "FCM PWA Icon"
+    },
+    {
+      "fieldname": "sb_rules",
+      "fieldtype": "Section Break",
+      "label": "Notificações Automáticas por Evento"
+    },
+    {
+      "fieldname": "notification_rules",
+      "fieldtype": "Table",
+      "label": "Regras de Notificação",
+      "options": "FCM Notification Rule"
+    }
+  ],
+  "issingle": 1,
+  "istable": 0,
+  "links": [],
+  "modified": "2026-09-01 00:00:00.000000",
+  "module": "fcm_notifications",
+  "name": "FCM Settings",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "print": 1,
+      "read": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "track_changes": 1
 }

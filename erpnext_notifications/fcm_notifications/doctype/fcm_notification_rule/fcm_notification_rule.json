@@ -1,69 +1,69 @@
 {
- "actions": [],
- "creation": "2026-09-01 00:00:00.000000",
- "doctype": "FCM Notification Rule",
- "engine": "InnoDB",
- "field_order": [
-  "enabled",
-  "doctype",
-  "event",
-  "recipient_field",
-  "title_template",
-  "body_template",
-  "data_template"
- ],
- "fields": [
-  {
-   "fieldname": "enabled",
-   "fieldtype": "Check",
-   "label": "Habilitado",
-   "default": "1"
-  },
-  {
-   "fieldname": "doctype",
-   "fieldtype": "Link",
-   "label": "DocType",
-   "options": "DocType",
-   "reqd": 1
-  },
-  {
-   "fieldname": "event",
-   "fieldtype": "Select",
-   "label": "Evento",
-   "options": "after_insert\non_update\non_submit\non_cancel",
-   "reqd": 1
-  },
-  {
-   "fieldname": "recipient_field",
-   "fieldtype": "Data",
-   "label": "Campo do destinatário (User)",
-   "description": "Nome do campo do documento que contém o Usuário destinatário. Se vazio, usa o 'owner' do documento. Ex.: 'user', 'owner'."
-  },
-  {
-   "fieldname": "title_template",
-   "fieldtype": "Data",
-   "label": "Título (template Jinja)",
-   "description": "Template Jinja com acesso ao documento. Ex.: 'Pedido {{ doc.name }} aprovado'."
-  },
-  {
-   "fieldname": "body_template",
-   "fieldtype": "Text",
-   "label": "Mensagem (template Jinja)",
-   "description": "Template Jinja com acesso ao documento e ao destinatário em 'recipient'."
-  },
-  {
-   "fieldname": "data_template",
-   "fieldtype": "Code",
-   "options": "JSON",
-   "label": "Dados extras (JSON opcional)",
-   "description": "Objeto JSON a ser mesclado no campo 'data' da notificação. Pode usar variáveis do documento."
-  }
- ],
- "istable": 1,
- "istable_parent": "FCM Settings",
- "links": [],
- "modified": "2026-09-01 00:00:00.000000",
- "module": "fcm_notifications",
- "name": "FCM Notification Rule",
- "owner": "Administrator"
+  "actions": [],
+  "creation": "2026-09-01 00:00:00.000000",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "enabled",
+    "doctype",
+    "event",
+    "recipient_field",
+    "title_template",
+    "body_template",
+    "data_template"
+  ],
+  "fields": [
+    {
+      "fieldname": "enabled",
+      "fieldtype": "Check",
+      "label": "Habilitado",
+      "default": "1"
+    },
+    {
+      "fieldname": "doctype",
+      "fieldtype": "Link",
+      "label": "DocType",
+      "options": "DocType",
+      "reqd": 1
+    },
+    {
+      "fieldname": "event",
+      "fieldtype": "Select",
+      "label": "Evento",
+      "options": "after_insert\non_update\non_submit\non_cancel",
+      "reqd": 1
+    },
+    {
+      "fieldname": "recipient_field",
+      "fieldtype": "Data",
+      "label": "Campo do destinatário (User)",
+      "description": "Nome do campo do documento que contém o Usuário destinatário. Se vazio, usa o 'owner' do documento. Ex.: 'user', 'owner'."
+    },
+    {
+      "fieldname": "title_template",
+      "fieldtype": "Data",
+      "label": "Título (template Jinja)",
+      "description": "Template Jinja com acesso ao documento. Ex.: 'Pedido {{ doc.name }} aprovado'."
+    },
+    {
+      "fieldname": "body_template",
+      "fieldtype": "Text",
+      "label": "Mensagem (template Jinja)",
+      "description": "Template Jinja com acesso ao documento e ao destinatário em 'recipient'."
+    },
+    {
+      "fieldname": "data_template",
+      "fieldtype": "Code",
+      "options": "JSON",
+      "label": "Dados extras (JSON opcional)",
+      "description": "Objeto JSON a ser mesclado no campo 'data' da notificação. Pode usar variáveis do documento."
+    }
+  ],
+  "istable": 1,
+  "istable_parent": "FCM Settings",
+  "links": [],
+  "modified": "2026-09-01 00:00:00.000000",
+  "module": "fcm_notifications",
+  "name": "FCM Notification Rule",
+  "owner": "Administrator"
 }
