@@ -1,19 +1,31 @@
-# Credenciais Firebase - NUNCA versionar (apenas o service account JSON)
+# ---- Secrets (nunca commitar) ----
 *firebase-adminsdk*.json
+*service_account*.json
+.env
+.env.*
+*.pem
+*.key
 
-# Python
+# ---- Python ----
 __pycache__/
 *.py[cod]
 *.egg-info/
-.eggs/
-dist/
-build/
-.env
 .venv/
 venv/
+build/
+dist/
 
-# Frappe / Bench
+# ---- Node / JS ----
 node_modules/
-sites/
-assets/
 *.log
+
+# ---- Editors / OS ----
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# ---- Frappe / Bench ----
+sites/
+*.sqlite3
+assets/dist/

@@ -6,7 +6,7 @@ import frappe
 from frappe import _
 from frappe.utils import get_url, strip_html
 
-from erpnext_fcm import services
+from erpnext_notifications import services
 
 
 def send_notification_log_push(doc, method=None):

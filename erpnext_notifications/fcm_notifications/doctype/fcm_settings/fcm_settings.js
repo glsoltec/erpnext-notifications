@@ -6,7 +6,7 @@ frappe.ui.form.on("FCM Settings", {
       __("Testar conexão"),
       function () {
         frappe.call({
-          method: "erpnext_fcm.api.test_connection",
+          method: "erpnext_notifications.api.test_connection",
           callback: function (r) {
             if (r.message && r.message.status === "ok") {
               frappe.msgprint(

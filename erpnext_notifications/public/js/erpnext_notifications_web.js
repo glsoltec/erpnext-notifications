@@ -1,6 +1,6 @@
 // ERPNext FCM - registro de push no navegador (Web/PWA)
 // Carrega o SDK do Firebase, registra o service worker em /sw.js, obtem o token
-// FCM e o vincula ao usuario logado via erpnext_fcm.api.subscribe.
+// FCM e o vincula ao usuario logado via erpnext_notifications.api.subscribe.
 
 /* global firebase, frappe */
 
@@ -8,7 +8,7 @@
   "use strict";
 
   const FIREBASE_SDK_VERSION = "10.8.0";
-  const TOKEN_KEY = "erpnext_fcm_token";
+  const TOKEN_KEY = "erpnext_notifications_token";
 
   function loadScript(src) {
     return new Promise(function (resolve, reject) {
@@ -69,7 +69,7 @@
     }
 
     frappe
-      .xcall("erpnext_fcm.api.get_web_config")
+      .xcall("erpnext_notifications.api.get_web_config")
       .then(function (cfg) {
         if (!cfg || !cfg.config || !cfg.vapid_public_key) {
           return;
@@ -102,7 +102,7 @@
                         return;
                       }
                       return frappe
-                        .xcall("erpnext_fcm.api.subscribe", {
+                        .xcall("erpnext_notifications.api.subscribe", {
                           fcm_token: token,
                         })
                         .then(function () {

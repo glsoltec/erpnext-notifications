@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-app_name = "erpnext_fcm"
-app_title = "ERPNext FCM"
+app_name = "erpnext_notifications"
+app_title = "ERPNext Notifications"
 app_publisher = "GL SOLTEC"
-app_description = "Envio de notificacoes push no ERPNext via Firebase Cloud Messaging (FCM v1)."
+app_description = "Notificacoes push (PWA e web) para usuarios do ERPNext via Firebase Cloud Messaging (FCM v1)."
 app_icon = "octicon octicon-bell"
 app_color = "blue"
 app_email = "contato@glsoltec.com.br"
 app_license = "MIT"
 app_version = "0.1.0"
-app_url = "https://github.com/glsoltec/erpnext_fcm"
+app_url = "https://github.com/glsoltec/erpnext-notifications"
 
 required_apps = ["frappe"]
 
@@ -17,7 +17,7 @@ required_apps = ["frappe"]
 # Permissoes de acesso a pacotes
 # ---------------------------------------------------------------------------
 app_include_js = [
-    "fcm_web.js",
+    "erpnext_notifications_web.js",
 ]
 
 # ---------------------------------------------------------------------------
@@ -35,24 +35,24 @@ modules = [
 # ---------------------------------------------------------------------------
 doc_events = {
     "Sales Invoice": {
-        "on_submit": "erpnext_fcm.methods.handle_doc_event",
-        "on_cancel": "erpnext_fcm.methods.handle_doc_event",
+        "on_submit": "erpnext_notifications.methods.handle_doc_event",
+        "on_cancel": "erpnext_notifications.methods.handle_doc_event",
     },
     "Purchase Invoice": {
-        "on_submit": "erpnext_fcm.methods.handle_doc_event",
-        "on_cancel": "erpnext_fcm.methods.handle_doc_event",
+        "on_submit": "erpnext_notifications.methods.handle_doc_event",
+        "on_cancel": "erpnext_notifications.methods.handle_doc_event",
     },
     "Leave Application": {
-        "on_update": "erpnext_fcm.methods.handle_doc_event",
+        "on_update": "erpnext_notifications.methods.handle_doc_event",
     },
     "Issue": {
-        "after_insert": "erpnext_fcm.methods.handle_doc_event",
+        "after_insert": "erpnext_notifications.methods.handle_doc_event",
     },
     "ToDo": {
-        "after_insert": "erpnext_fcm.methods.handle_doc_event",
+        "after_insert": "erpnext_notifications.methods.handle_doc_event",
     },
     "Notification Log": {
-        "after_insert": "erpnext_fcm.methods.send_notification_log_push",
+        "after_insert": "erpnext_notifications.methods.send_notification_log_push",
     },
 }
 
@@ -61,11 +61,11 @@ doc_events = {
 # ---------------------------------------------------------------------------
 scheduler_events = {
     "all": [
-        "erpnext_fcm.scheduler.retry_failed_notifications",
+        "erpnext_notifications.scheduler.retry_failed_notifications",
     ],
     "daily": [
-        "erpnext_fcm.scheduler.cleanup_old_logs",
-        "erpnext_fcm.scheduler.cleanup_invalid_devices",
+        "erpnext_notifications.scheduler.cleanup_old_logs",
+        "erpnext_notifications.scheduler.cleanup_invalid_devices",
     ],
 }
 

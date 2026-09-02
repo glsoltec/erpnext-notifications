@@ -6,7 +6,7 @@ from typing import Any
 import frappe
 from frappe import _
 
-from erpnext_fcm import services
+from erpnext_notifications import services
 
 
 # ---------------------------------------------------------------------------
@@ -21,7 +21,7 @@ def register_device(
 ) -> dict:
     """Registra o token FCM do dispositivo para o usuario logado.
 
-    Chamado via: POST /api/method/erpnext_fcm.api.register_device
+    Chamado via: POST /api/method/erpnext_notifications.api.register_device
     """
     token = (token or "").strip()
     if not token:
@@ -142,7 +142,7 @@ def unsubscribe(fcm_token: str) -> dict:
 @frappe.whitelist()
 def test_connection() -> dict:
     """Valida o service account e a autenticacao OAuth2 com o Firebase (sem enviar)."""
-    from erpnext_fcm.firebase.client import get_project_id, get_session
+    from erpnext_notifications.firebase.client import get_project_id, get_session
 
     project_id = get_project_id()
     session = get_session()

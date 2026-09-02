@@ -5,7 +5,7 @@ from typing import Any
 
 import frappe
 
-from erpnext_fcm.firebase.client import (
+from erpnext_notifications.firebase.client import (
     _InvalidTokenError,
     get_settings,
     send_to_token,
@@ -120,7 +120,7 @@ def _send_to_tokens(
 ) -> dict:
     if enqueue:
         frappe.enqueue(
-            "erpnext_fcm.services._send_tokens_job",
+            "erpnext_notifications.services._send_tokens_job",
             tokens=tokens,
             title=title,
             body=body,

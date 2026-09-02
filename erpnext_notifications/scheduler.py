@@ -20,8 +20,8 @@ def retry_failed_notifications():
     if not failed:
         return
 
-    from erpnext_fcm.firebase.client import _InvalidTokenError
-    from erpnext_fcm.firebase.client import get_settings, send_to_token
+    from erpnext_notifications.firebase.client import _InvalidTokenError
+    from erpnext_notifications.firebase.client import get_settings, send_to_token
 
     try:
         get_settings()

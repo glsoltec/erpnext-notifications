@@ -1,170 +1,89 @@
-# ERPNext FCM
+# ERPNext Notifications
 
-App customizado para o ERPNext/Frappe que envia **notificações push** via
-**Firebase Cloud Messaging (FCM v1)** — a API atual do Google, autenticada por
-conta de serviço (OAuth2). Simples, prático e de fácil manutenção.
+Aplicativo customizado para o **ERPNext** que envia **notificações push** para
+usuários em **PWA e web** via **Firebase Cloud Messaging (FCM v1)**.
 
-## Recursos
+- ⚡ **Web / PWA** — service worker, manifest e push no navegador (desk).
+- 🔔 **Relay do Notification Log** — mentions, assignments, shares, energy points
+  e alerts nativos do ERPNext viram push em todos os dispositivos do usuário.
+- 🧩 **Regras por evento** — configure DocType + evento + destinatário + templates
+  Jinja sem escrever código (ex.: aprovação de pedido, folha, tarefa).
+- 📱 **Multi-dispositivo** — o mesmo usuário pode ter vários tokens ativos
+  (mobile e web), todos recebem a notificação.
+- 🛡️ **Robusto** — fila assíncrona, log de entrega, retry automático e
+  desativação de tokens inválidos.
 
-- **Registro de dispositivos** por usuário (DocType `FCM Device`) + endpoints HTTP para o app.
-- **Envio** para um usuário, vários usuários ou **todos** os dispositivos ativos.
-- **Envio automático por evento** de documento via regras configuráveis (Jinja) em `FCM Settings`.
-- **Log de notificações** (`FCM Notification Log`) com status, ID da mensagem e erros.
-- **Tratamento de token inválido**: desativa automaticamente dispositivos com token vencido.
-- **Tarefas agendadas**: reenvio de falhas temporárias e limpeza de logs/dispositivos antigos.
-- **Botão "Testar conexão"** no FCM Settings para validar o service account.
-- **Web/PWA no navegador**: service worker (`/sw.js`), manifest (`/manifest.json`), push no navegador
-  (FCM Web) e relay das notificações nativas do ERPNext (`Notification Log`) para push.
-
-## Requisitos
-
-- Frappe / ERPNext **v15 ou v16**
-- Python `>=3.10`
-- Um projeto no [Firebase](https://console.firebase.google.com) com Cloud Messaging habilitado
-- Dependência Python: `google-auth` (+ `requests`, já presente no Frappe)
-
-## Instalação
-
-```bash
-# 1. Copie o app para o bench
-cd /caminho/do/bench
-cp -r /root/workspace/dev-apps/erpnext-fcm/erpnext_fcm apps/erpnext_fcm
-
-# 2. Instale a dependencia no virtualenv do bench
-bench pip install google-auth
-
-# 3. Baixe e instale o app no site
-bench get-app erpnext_fcm --skip-assets   # se ainda nao baixado via apps.txt
-bench --site NOME_DO_SITE install-app erpnext_fcm
-bench --site NOME_DO_SITE migrate
-bench build
-bench restart
-```
-
-> Se preferir, use `bench get-app https://github.com/glsoltec/erpnext_fcm.git` (branch `version-16`).
-
-## Configuração
-
-1. **Firebase**: console > Cloud Messaging. Garanta que a conta de serviço tenha permissão
-   (o papel `Firebase Cloud Messaging API` deve estar presente; use **IAM > Grant Access**).
-   Em _Configurações do projeto > Contas de serviço > Gerar nova chave privada_, baixe o JSON.
-2. **ERPNext**: acesse `FCM Settings` e:
-   - Ative **Habilitar notificações**.
-   - Cole o conteúdo do JSON da conta de serviço em **Service Account JSON**.
-   - O **Project ID** é preenchido automaticamente.
-   - Clique em **Testar conexão** (botão "Firebase") para validar.
-
-### Push no navegador (Web/PWA)
-
-No Firebase console: _Configurações do projeto > Seus apps > App da Web_ (crie um se não houver)
-e copie o objeto `firebaseConfig`. Em **Cloud Messaging > Web Push certificates** copie a
-**chave pública** (VAPID).
-
-No `FCM Settings`, seção **Web/PWA (navegador)**:
-
-- **Habilitar push no navegador (Web/PWA)**: ligar.
-- **Firebase Web Config**: cole o `firebaseConfig` como JSON (apiKey, authDomain, projectId,
-  storageBucket, messagingSenderId, appId).
-- **VAPID Public Key**: cole a chave pública do Web Push.
-
-Na seção **Manifest (PWA)** configure nome, cores, start_url, e em **Ícones do PWA** adicione
-um ícone (recomendado 512x512 PNG em `/files/...`).
-
-> O app injeta o `<link rel="manifest">`, registra o service worker em `/sw.js` e envia o token
-> do navegador para o `FCM Device` (device_type `Web`) automaticamente no Desk. As notificações
-> nativas do ERPNext (`Notification Log`) são repassadas como push para o destinatário.
-
-## Uso
-
-### 1) Registrar dispositivo (no app mobile)
-
-```
-POST /api/method/erpnext_fcm.api.register_device
-Content-Type: application/json
-Authorization: token <api_key>:<api_secret>
-```
-
-```json
-{
-  "token": "fcm_registration_token",
-  "device_type": "Android",
-  "app_version": "1.0.0"
-}
-```
-
-Para remover: `POST /api/method/erpnext_fcm.api.unregister_device` com `{ "token": "..." }`.
-
-### 2) Enviar notificação
-
-```
-POST /api/method/erpnext_fcm.api.send_notification
-```
-
-```json
-{
-  "recipients": "admin", // ou ["user1","user2"] ou "*" para todos
-  "title": "Pedido aprovado",
-  "body": "O pedido SAL-2026-0001 foi aprovado.",
-  "data": { "doctype": "Sales Order", "name": "SAL-2026-0001" },
-  "enqueue": false
-}
-```
-
-### 3) Enviar por evento automático (sem código)
-
-No `FCM Settings`, em **Regras de Notificação**, adicione uma linha:
-
-| Campo                 | Exemplo                                                                               |
-| :-------------------- | :------------------------------------------------------------------------------------ |
-| DocType               | `Sales Invoice`                                                                       |
-| Evento                | `on_submit`                                                                           |
-| Campo do destinatário | _(vazio usa o `owner`)_                                                               |
-| Título (Jinja)        | `Fatura {{ doc.name }} aprovada`                                                      |
-| Mensagem (Jinja)      | `Olá, a fatura de {{ doc.customer }} no valor de {{ doc.grand_total }} foi aprovada.` |
-| Dados extras (JSON)   | `{"doctype": "{{ doc.doctype }}", "name": "{{ doc.name }}"}`                          |
-
-### 4) Chamada programática (Server Script / Python)
-
-```python
-from erpnext_fcm import services
-
-services.send_to_user(
-    user="admin",
-    title="Relatório pronto",
-    body="Seu relatório foi gerado.",
-    data={"link": "/app/report/x"},
-    enqueue=True,
-)
-```
+> Referência de PWA consultada: [omfsakib/pwa_frappe](https://github.com/omfsakib/pwa_frappe).
 
 ## Estrutura
 
 ```
-erpnext_fcm/
-├── hooks.py            # doc_events, scheduler_events, app meta, app_include_js
-├── api.py              # endpoints whitelisted (dispositivo + envio + teste + web)
-├── services.py         # orquestracao de envio + log + tratamento de token invalido
-├── methods.py          # motor de regras de evento (Jinja) + relay do Notification Log
-├── scheduler.py        # reenvio e limpeza agendada
-├── firebase/client.py  # cliente FCM v1 (OAuth2 + HTTP v1)
-├── public/js/fcm_web.js # registro de push no navegador (Web/PWA)
-├── www/sw.js           # service worker em /sw.js
-├── www/manifest.json   # manifest PWA em /manifest.json
-└── fcm_notifications/doctype/
-    ├── fcm_settings/           # Single de configuracao (server + web/PWA + manifest)
-    ├── fcm_device/             # dispositivo por usuario (mobile + web)
-    ├── fcm_notification_rule/  # regra filha (evento -> Jinja)
-    ├── fcm_pwa_icon/           # icones do manifest PWA
-    └── fcm_notification_log/   # historico de envios
+erpnext_notifications/
+├── api.py                 # Endpoints whitelisted (registro, envio, config web)
+├── hooks.py               # doc_events, scheduler, app_include_js
+├── methods.py             # Relay de Notification Log + regras por evento
+├── services.py            # Orquestração de envio (fila, log, multi-token)
+├── scheduler.py           # Retry, cleanup de logs e dispositivos inválidos
+├── firebase/client.py     # Cliente HTTP FCM v1 (OAuth2 service account)
+├── fcm_notifications/     # DocTypes: Settings, Device, Log, Rule, PWA Icon
+├── public/js/             # Registro de push no navegador (desk)
+└── www/                   # manifest.json, sw.js (service worker)
 ```
 
-## Segurança
+## Instalação
 
-- **Nunca versionar** o JSON da conta de serviço (já está no `.gitignore`).
-- Endpoints exigem usuário autenticado (`register_device`/`unregister_device`/`get_my_devices`
-  operam apenas sobre o usuário logado; sem `allow_guest`).
-- Credenciais são armazenadas em `FCM Settings` (restrito a `System Manager`) e nunca expostas via API pública.
+```bash
+cd $PATH_TO_YOUR_BENCH
+bench get-app https://github.com/glsoltec/erpnext-notifications
+bench install-app erpnext_notifications
+bench migrate
+bench build --app erpnext_notifications
+```
+
+Reinicie os processos (`bench restart`) e force o recarregamento do desk.
+
+## Configuração
+
+1. Crie um [projeto Firebase](https://console.firebase.google.com/) e habilite
+   **Cloud Messaging**.
+2. Em **Project Settings → Cloud Messaging → Web configuration**, gere o
+   **certificado Web Push (par VAPID)** e copie a chave pública.
+3. Em **Project Settings → General → Seus apps**, copie o **firebaseConfig** do
+   app da Web (`apiKey`, `authDomain`, `projectId`, `storageBucket`,
+   `messagingSenderId`, `appId`).
+4. Gere uma **chave privada** da conta de serviço (Cloud Messaging) e copie o
+   conteúdo JSON.
+5. No ERPNext, abra **FCM Settings** (módulo FCM Notifications) e preencha:
+   - **Service Account JSON** (da etapa 4) — preenche o Project ID automaticamente.
+   - Marque **Habilitar notificações**.
+   - Seção **Web / PWA**: marque **Habilitar push no navegador** e informe o
+     **Firebase Web Config** (JSON) e a **VAPID Public Key**.
+   - Use **Testar conexão** para validar o service account.
+6. **Regras automáticas** (opcional): em FCM Settings → _Regras de Notificação_,
+   defina DocType + evento + campo destinatário + templates Jinja.
+
+> O push nativo do ERPNext (`Notification Log`) já funciona sem regras — assim que
+> um admin configura o FCM, os usuários passam a receber push automaticamente.
+
+## Uso programático
+
+```python
+# Enviar para um usuário
+frappe.call("erpnext_notifications.api.send_notification", {
+    "recipients": "user@empresa.com.br",
+    "title": "Pedido aprovado",
+    "body": "Seu pedido foi aprovado.",
+})
+```
+
+## Contribuindo
+
+Este app usa `pre-commit` (ruff, eslint, prettier, pyupgrade):
+
+```bash
+pre-commit install
+```
 
 ## Licença
 
-MIT — GL SOLTEC.
+MIT
