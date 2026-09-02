@@ -1,1 +1,1 @@
-fcm_notifications
+App Notifications

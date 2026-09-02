@@ -33,7 +33,7 @@
   "istable_parent": "FCM Settings",
   "links": [],
   "modified": "2026-09-01 00:00:00.000000",
-  "module": "fcm_notifications",
+  "module": "App Notifications",
   "name": "FCM PWA Icon",
   "owner": "Administrator"
 }
