@@ -191,6 +191,7 @@ def unsubscribe(fcm_token: str) -> dict:
 def test_connection() -> dict:
     """Valida o service account e a autenticacao OAuth2 com o Firebase (sem enviar)."""
     _require_post()
+    frappe.only_for("System Manager")
     from erpnext_notifications.firebase.client import get_project_id, get_session
 
     project_id = get_project_id()
@@ -205,4 +206,3 @@ def test_connection() -> dict:
         "project_id": project_id,
         "token_issued": bool(token),
     }
-

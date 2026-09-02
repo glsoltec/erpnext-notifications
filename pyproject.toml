@@ -3,6 +3,8 @@ name = "erpnext_notifications"
 version = "0.1.0"
 description = "Notificacoes push (PWA e web) para usuarios do ERPNext via Firebase Cloud Messaging (FCM v1)."
 authors = [{ name = "GL SOLTEC", email = "contato@glsoltec.com.br" }]
+readme = "README.md"
+license = { file = "LICENSE" }
 requires-python = ">=3.10"
 dependencies = [
     "google-auth>=2.27,<3",
@@ -22,6 +24,10 @@ build-backend = "flit_core.buildapi"
 
 [project.urls]
 Repository = "https://github.com/glsoltec/erpnext-notifications"
+
+[tool.bench.frappe-dependencies]
+frappe = ">=16.0.0,<17.0.0"
+erpnext = ">=16.0.0,<17.0.0"
 
 [tool.ruff]
 line-length = 100

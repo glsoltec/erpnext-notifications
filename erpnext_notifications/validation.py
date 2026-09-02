@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import re
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlparse
 
@@ -21,7 +20,6 @@ RETRY_BACKOFF = (60, 300, 1800)
 # Codigos HTTP de erro transitario no FCM (reprocessaveis)
 TRANSIENT_HTTP_CODES = {429, 500, 502, 503, 504}
 
-_TOKEN_PREFIX_RE = re.compile(r"^[A-Za-z0-9:._-]{1,40}$")
 _URL_SCHEMES_ALLOWED = {"https"}
 
 
@@ -42,7 +40,7 @@ def _validate_token_format(token: str) -> str:
     token = (token or "").strip()
     if not token:
         raise ValueError("Token FCM e obrigatorio.")
-    if len(token) > 1024 or not _TOKEN_PREFIX_RE.match(token[:40]):
+    if len(token) > 2048 or any(char.isspace() or ord(char) < 32 for char in token):
         raise ValueError("Token FCM em formato invalido.")
     return token
 

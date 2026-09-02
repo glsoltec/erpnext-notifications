@@ -11,7 +11,7 @@ app_license = "MIT"
 app_version = "0.1.0"
 app_url = "https://github.com/glsoltec/erpnext-notifications"
 
-required_apps = ["frappe"]
+required_apps = ["frappe", "erpnext"]
 
 # ---------------------------------------------------------------------------
 # Permissoes de acesso a pacotes
