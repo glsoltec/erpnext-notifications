@@ -93,12 +93,40 @@ frappe.call("erpnext_notifications.api.send_notification", {
 - O `.gitignore` protege service accounts (`*firebase-adminsdk*.json`). Não
   commitar arquivos de credencial.
 
+### Validação de payload e limites
+
+- `send_notification` valida título/corpo/imagem/`data` no servidor e rejeita
+  payloads excessivos ou com objetos aninhados.
+- URLs de notificação (`image`, `click_action`) aceitam somente `https://` ou
+  caminhos relativos do próprio domínio.
+- `get_my_devices` retorna o token **mascarado** (`token_masked`).
+- Destinatários são normalizados e limitados por chamada.
+
+### Retry e lifecycle
+
+- Logs de token inválido recebem status **`Invalid Token`** e `retryable=0`,
+  não sendo reprocessados.
+- Falhas transitórias são reprocessadas com **backoff exponencial**
+  (`next_retry_at`) até o limite configurado.
+- A desativação automática de tokens respeita **`auto_remove_invalid`** em
+  FCM Settings.
+- Logs são gravados **por token** (usuário real do dispositivo), evitando valor
+  inválido no campo `user` em envios multi-usuário.
+
 ## Contribuindo
 
 Este app usa `pre-commit` (ruff, eslint, prettier, pyupgrade):
 
 ```bash
 pre-commit install
+```
+
+## Testes
+
+Testes unitários (sem dependência de bench/Frappe), usando `unittest`:
+
+```bash
+python -m unittest discover -s tests
 ```
 
 ## Licença

@@ -14,7 +14,10 @@
   "status",
   "fcm_message_id",
   "error_message",
+  "retryable",
   "retry_count",
+  "next_retry_at",
+  "last_attempt_at",
   "send_time"
  ],
  "fields": [
@@ -62,7 +65,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Queued\nSent\nFailed",
+   "options": "Queued\nSent\nFailed\nInvalid Token",
    "default": "Queued",
    "in_list_view": 1
   },
@@ -77,10 +80,26 @@
    "label": "Mensagem de erro"
   },
   {
+   "fieldname": "retryable",
+   "fieldtype": "Check",
+   "label": "Reenviável",
+   "description": "Falso para falhas permanentes (ex.: token inválido)."
+  },
+  {
    "fieldname": "retry_count",
    "fieldtype": "Int",
    "label": "Tentativas",
    "default": "0"
+  },
+  {
+   "fieldname": "next_retry_at",
+   "fieldtype": "Datetime",
+   "label": "Próximo retry"
+  },
+  {
+   "fieldname": "last_attempt_at",
+   "fieldtype": "Datetime",
+   "label": "Última tentativa"
   },
   {
    "fieldname": "send_time",

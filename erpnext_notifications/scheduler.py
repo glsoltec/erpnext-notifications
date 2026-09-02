@@ -2,19 +2,30 @@ from __future__ import annotations
 
 import frappe
 
+from erpnext_notifications.validation import can_retry, next_retry_at
+
 
 def _get_retry_limit() -> int:
-    # Reusa o batch size como teto simples de tentativas por log.
     return frappe.db.get_single_value("FCM Settings", "batch_size") or 100
 
 
 def retry_failed_notifications():
-    """Reenvia notificacoes que falharam por erro temporario (nao token invalido)."""
+    """Reenvia notificacoes que falharam por erro temporario.
+
+    Logs marcados como nao-reprocessaveis (retryable=0), como tokens invalidos,
+    sao ignorados. Respeita o horario de proximo retry (backoff exponencial).
+    """
     limit = _get_retry_limit()
+    now = frappe.utils.now_datetime()
     failed = frappe.get_all(
         "FCM Notification Log",
-        filters={"status": "Failed", "retry_count": ["<", 3]},
-        fields=["name", "title", "body", "token", "data_payload", "retry_count"],
+        filters={
+            "status": "Failed",
+            "retryable": 1,
+            "retry_count": ["<", 3],
+        },
+        or_filters=[["next_retry_at", "is", "not set"], ["next_retry_at", "<=", now]],
+        fields=["name", "title", "body", "token", "data_payload", "retry_count", "next_retry_at"],
         limit=limit,
     )
     if not failed:
@@ -32,12 +43,21 @@ def retry_failed_notifications():
         data = _parse_payload(log.data_payload)
         try:
             res = send_to_token(log.token, log.title, body=log.body or "", data=data)
-            _mark(log.name, "Sent", message_id=res.get("message_id"))
+            _mark(log.name, "Sent", message_id=res.get("message_id"), retryable=False)
         except _InvalidTokenError as exc:
-            _mark(log.name, "Failed", error=exc)
+            _mark(log.name, "Invalid Token", error=exc, retryable=False)
             _deactivate_token(log.token)
         except Exception as exc:
-            _mark(log.name, "Failed", error=exc, increment=True)
+            attempts = (log.retry_count or 0) + 1
+            retryable = can_retry(attempts, True)
+            _mark(
+                log.name,
+                "Failed",
+                error=exc,
+                retryable=retryable,
+                increment=True,
+                next_retry_at=next_retry_at(attempts) if retryable else None,
+            )
 
 
 def _parse_payload(raw):
@@ -51,22 +71,39 @@ def _parse_payload(raw):
         return None
 
 
-def _mark(log_name, status, message_id=None, error=None, increment=False):
+def _mark(
+    log_name,
+    status,
+    message_id=None,
+    error=None,
+    increment=False,
+    retryable=None,
+    next_retry_at=None,
+):
     doc = frappe.get_doc("FCM Notification Log", log_name)
     doc.status = status
     if message_id:
         doc.fcm_message_id = message_id
     if error:
         doc.error_message = str(error)[:2000]
-    if status in ("Sent", "Failed"):
+    if status in ("Sent", "Failed", "Invalid Token"):
         doc.send_time = frappe.utils.now_datetime()
+        doc.last_attempt_at = frappe.utils.now_datetime()
     if increment:
         doc.retry_count = (doc.retry_count or 0) + 1
+    if retryable is not None:
+        doc.retryable = 1 if retryable else 0
+    if next_retry_at is not None:
+        doc.next_retry_at = next_retry_at
     doc.flags.ignore_permissions = True
     doc.save(ignore_permissions=True)
 
 
 def _deactivate_token(token):
+    from erpnext_notifications.services import _auto_remove_invalid
+
+    if not _auto_remove_invalid():
+        return
     device = frappe.db.get_value("FCM Device", {"token": token}, "name")
     if not device:
         return

@@ -7,6 +7,12 @@ import frappe
 from frappe import _
 
 from erpnext_notifications import services
+from erpnext_notifications.validation import (
+    _validate_token_format,
+    mask_token,
+    normalize_recipients,
+    validate_payload,
+)
 
 
 def _require_post():
@@ -34,9 +40,10 @@ def register_device(
     Chamado via: POST /api/method/erpnext_notifications.api.register_device
     """
     _require_post()
-    token = (token or "").strip()
-    if not token:
-        frappe.throw(_("Token FCM e obrigatorio."))
+    try:
+        token = _validate_token_format(token)
+    except ValueError as exc:
+        frappe.throw(_(str(exc)))
     if not frappe.session.user or frappe.session.user == "Guest":
         frappe.throw(_("Autenticacao necessaria para registrar dispositivo."))
 
@@ -87,13 +94,17 @@ def unregister_device(token: str) -> dict:
 
 @frappe.whitelist()
 def get_my_devices() -> list[dict[str, Any]]:
-    """Lista os dispositivos ativos do usuario logado."""
-    return frappe.get_all(
+    """Lista os dispositivos ativos do usuario logado (token mascarado)."""
+    devices = frappe.get_all(
         "FCM Device",
         filters={"user": frappe.session.user, "is_active": 1},
         fields=["name", "token", "device_type", "app_version", "last_seen"],
         ignore_permissions=True,
     )
+    for dev in devices:
+        dev["token_masked"] = mask_token(dev.get("token"))
+        dev.pop("token", None)
+    return devices
 
 
 # ---------------------------------------------------------------------------
@@ -116,16 +127,28 @@ def send_notification(
     _require_post()
     frappe.only_for("System Manager")
 
+    try:
+        cleaned = validate_payload(title, body, image, data)
+    except ValueError as exc:
+        frappe.throw(_(str(exc)))
+        cleaned = {"title": "", "body": "", "image": None, "data": None}
+
+    title, body, image, data = cleaned["title"], cleaned["body"], cleaned["image"], cleaned["data"]
+
     if not title:
         title = frappe.get_cached_doc("FCM Settings").get("default_title") or _("Notificacao")
     if not recipients:
         recipients = frappe.session.user
 
-    if recipients == "*" or recipients == "all":
+    try:
+        users = normalize_recipients(recipients)
+    except ValueError as exc:
+        frappe.throw(_(str(exc)))
+        users = []
+
+    if users == ["*"]:
         return services.send_to_all(title, body, data=data, image=image, enqueue=enqueue)
 
-    users = recipients if isinstance(recipients, list) else [recipients]
-    users = [u for u in (u.strip() for u in users if isinstance(u, str)) if u]
     return services.send_to_users(users, title, body, data=data, image=image, enqueue=enqueue)
 
 

@@ -8,6 +8,7 @@
 // arquivos. Ao atualizar a versao, atualize tambem o SRI do loader da pagina.
 
 var fcmConfigParam = new URL(location).searchParams.get("config");
+var CACHE_PREFIX = "erpnext-notifications-";
 var STATIC_CACHE = "erpnext-notifications-static-v1";
 var messaging = null;
 
@@ -23,7 +24,8 @@ self.addEventListener("activate", function (event) {
         return Promise.all(
           keys
             .filter(function (k) {
-              return k !== STATIC_CACHE;
+              // Remove apenas caches desta app, preservando os de outras apps.
+              return k.indexOf(CACHE_PREFIX) === 0 && k !== STATIC_CACHE;
             })
             .map(function (k) {
               return caches.delete(k);
@@ -35,8 +37,7 @@ self.addEventListener("activate", function (event) {
 });
 
 // Cache offline seguro: apenas assets estaticos same-origin (CSS/JS/imgs/fonts).
-// Navegacoes (HTML/desk) usam rede primeiro com fallback ao cache, sem envenenar
-// dados dinamicos do ERPNext.
+// Nao cachear paginas dinamicas do Desk nem respostas de API.
 self.addEventListener("fetch", function (event) {
   var req = event.request;
   if (req.method !== "GET") return;
@@ -62,16 +63,8 @@ self.addEventListener("fetch", function (event) {
         });
       }),
     );
-    return;
   }
-
-  if (isSameOrigin && req.mode === "navigate") {
-    event.respondWith(
-      fetch(req).catch(function () {
-        return caches.match(req);
-      }),
-    );
-  }
+  // Navegacoes nao sao interceptadas: sem promessa de offline falso.
 });
 
 // FCM em segundo plano (aba fechada)

@@ -1,0 +1,1 @@
+"""Testes unitarios do modulo de validacao (sem dependencia de Frappe)."""

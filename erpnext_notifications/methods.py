@@ -7,6 +7,7 @@ from frappe import _
 from frappe.utils import get_url, strip_html
 
 from erpnext_notifications import services
+from erpnext_notifications.validation import safe_notification_url
 
 
 def send_notification_log_push(doc, method=None):
@@ -25,7 +26,9 @@ def send_notification_log_push(doc, method=None):
     body = strip_html(doc.subject or "")[:200]
     data = {"type": doc.type or "", "subject": body}
     if doc.link:
-        data["click_action"] = get_url(doc.link)
+        url = safe_notification_url(get_url(doc.link))
+        if url:
+            data["click_action"] = url
 
     try:
         services.send_to_user(doc.for_user, title, body=body, data=data, enqueue=True)
