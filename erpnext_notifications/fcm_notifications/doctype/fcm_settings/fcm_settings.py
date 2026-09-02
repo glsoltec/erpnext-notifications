@@ -27,6 +27,7 @@ class FCMSettings(Document):
     @frappe.whitelist()
     def get_service_account(self):
         """Retorna o dict da conta de serviço (somente System Manager)."""
+        frappe.only_for("System Manager")
         if not self.service_account_json:
             frappe.throw(frappe._("Service account não configurado em FCM Settings."))
         try:

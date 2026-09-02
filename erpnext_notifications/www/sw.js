@@ -1,6 +1,11 @@
 // ERPNext Notifications - Service Worker (web push / FCM background + offline shell)
 // O config do Firebase chega pela query string no momento do registro:
 // navigator.serviceWorker.register('/sw.js?config=<encoded-json>')
+//
+// Nota: importScripts() nao aceita atributo SRI/integrity. O SDK e carregado do
+// CDN oficial do Google com versao fixada (10.8.0) e auditada. O loader da
+// pagina (public/js/erpnext_notifications_web.js) usa SRI para os mesmos
+// arquivos. Ao atualizar a versao, atualize tambem o SRI do loader da pagina.
 
 var fcmConfigParam = new URL(location).searchParams.get("config");
 var STATIC_CACHE = "erpnext-notifications-static-v1";

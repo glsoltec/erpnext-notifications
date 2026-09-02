@@ -9,6 +9,16 @@ from frappe import _
 from erpnext_notifications import services
 
 
+def _require_post():
+    """Endpoints com efeito colateral devem ser chamados apenas via POST.
+
+    Reduz o risco de CSRF/GET com efeito colateral (o framework nao exige
+    token CSRF em GET, e whitelisted methods podem ser invocados por GET).
+    """
+    if not frappe.request or frappe.request.method != "POST":
+        frappe.throw(_("Metodo HTTP nao permitido. Use POST."), exc_class=frappe.PermissionError)
+
+
 # ---------------------------------------------------------------------------
 # Registro / gerenciamento de dispositivos (chamado pelo app mobile / web)
 # ---------------------------------------------------------------------------
@@ -23,6 +33,7 @@ def register_device(
 
     Chamado via: POST /api/method/erpnext_notifications.api.register_device
     """
+    _require_post()
     token = (token or "").strip()
     if not token:
         frappe.throw(_("Token FCM e obrigatorio."))
@@ -32,6 +43,12 @@ def register_device(
     current = frappe.db.get_value("FCM Device", {"token": token}, "name")
     if current:
         doc = frappe.get_doc("FCM Device", current)
+        # F-03: um token so pode ser registrado pelo usuario que ja o possui.
+        if doc.user != frappe.session.user:
+            frappe.throw(
+                _("Token ja registrado por outro usuario."),
+                exc_class=frappe.PermissionError,
+            )
         doc.flags.ignore_permissions = True
     else:
         doc = frappe.new_doc("FCM Device")
@@ -53,6 +70,7 @@ def register_device(
 @frappe.whitelist()
 def unregister_device(token: str) -> dict:
     """Desativa o token do usuario logado (logout / token rotacionado)."""
+    _require_post()
     token = (token or "").strip()
     current = frappe.db.get_value(
         "FCM Device",
@@ -74,6 +92,7 @@ def get_my_devices() -> list[dict[str, Any]]:
         "FCM Device",
         filters={"user": frappe.session.user, "is_active": 1},
         fields=["name", "token", "device_type", "app_version", "last_seen"],
+        ignore_permissions=True,
     )
 
 
@@ -94,6 +113,9 @@ def send_notification(
     `recipients`: "*" envia para todos; lista de usuarios envia para cada um.
     `data`: dict opcional (payload customizado acessiveis no handler do app).
     """
+    _require_post()
+    frappe.only_for("System Manager")
+
     if not title:
         title = frappe.get_cached_doc("FCM Settings").get("default_title") or _("Notificacao")
     if not recipients:
@@ -103,6 +125,7 @@ def send_notification(
         return services.send_to_all(title, body, data=data, image=image, enqueue=enqueue)
 
     users = recipients if isinstance(recipients, list) else [recipients]
+    users = [u for u in (u.strip() for u in users if isinstance(u, str)) if u]
     return services.send_to_users(users, title, body, data=data, image=image, enqueue=enqueue)
 
 
@@ -130,18 +153,21 @@ def get_web_config() -> dict:
 @frappe.whitelist()
 def subscribe(fcm_token: str) -> dict:
     """Registra o navegador do usuario logado para receber push (device_type='Web')."""
+    _require_post()
     return register_device(token=fcm_token, device_type="Web", user_agent="PWA")
 
 
 @frappe.whitelist()
 def unsubscribe(fcm_token: str) -> dict:
     """Desativa o token web do usuario logado."""
+    _require_post()
     return unregister_device(token=fcm_token)
 
 
 @frappe.whitelist()
 def test_connection() -> dict:
     """Valida o service account e a autenticacao OAuth2 com o Firebase (sem enviar)."""
+    _require_post()
     from erpnext_notifications.firebase.client import get_project_id, get_session
 
     project_id = get_project_id()

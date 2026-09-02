@@ -19,6 +19,7 @@ def get_active_tokens_for_user(user: str) -> list[str]:
         "FCM Device",
         filters={"user": user, "is_active": 1},
         pluck="token",
+        ignore_permissions=True,
     )
 
 
@@ -105,7 +106,9 @@ def send_to_all(
     enqueue: bool = False,
 ) -> dict:
     """Envia para todos os dispositivos ativos do sistema."""
-    tokens = frappe.get_all("FCM Device", filters={"is_active": 1}, pluck="token")
+    tokens = frappe.get_all(
+        "FCM Device", filters={"is_active": 1}, pluck="token", ignore_permissions=True
+    )
     return _send_to_tokens(tokens, title, body, data=data, image=image, enqueue=enqueue)
 
 

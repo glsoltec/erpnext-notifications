@@ -5,8 +5,15 @@ description = "Notificacoes push (PWA e web) para usuarios do ERPNext via Fireba
 authors = [{ name = "GL SOLTEC", email = "contato@glsoltec.com.br" }]
 requires-python = ">=3.10"
 dependencies = [
-    "google-auth>=2.0",
-    "requests>=2.20",
+    "google-auth>=2.27,<3",
+    "requests>=2.31,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.5",
+    "bandit>=1.7",
+    "pip-audit>=2.7",
 ]
 
 [build-system]
@@ -15,3 +22,11 @@ build-backend = "flit_core.buildapi"
 
 [project.urls]
 Repository = "https://github.com/glsoltec/erpnext-notifications"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B", "S"]
+ignore = ["S101", "S324", "B008"]

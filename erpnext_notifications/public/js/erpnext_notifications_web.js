@@ -1,4 +1,4 @@
-// ERPNext FCM - registro de push no navegador (Web/PWA)
+// ERPNext Notifications - registro de push no navegador (Web/PWA)
 // Carrega o SDK do Firebase, registra o service worker em /sw.js, obtem o token
 // FCM e o vincula ao usuario logado via erpnext_notifications.api.subscribe.
 
@@ -10,7 +10,15 @@
   const FIREBASE_SDK_VERSION = "10.8.0";
   const TOKEN_KEY = "erpnext_notifications_token";
 
-  function loadScript(src) {
+  // SRI (integrity) das versoes homologadas do SDK no CDN do Google.
+  const FIREBASE_SRI = {
+    "firebase-app-compat.js":
+      "sha384-4gq9w/AGf72FXdNQ3Kn3EqWP7633NbCMjpYHt8YCZyXf23o2opcuAr4cif41tLrC",
+    "firebase-messaging-compat.js":
+      "sha384-F8rlC59erkC9PkWp7FIVgQHXhGqSCrhQS1i1zIWYJORAsFGQZE+do+ct+jlO2+0z",
+  };
+
+  function loadScript(src, integrity) {
     return new Promise(function (resolve, reject) {
       if (document.querySelector('script[src="' + src + '"]')) {
         resolve();
@@ -18,6 +26,10 @@
       }
       const s = document.createElement("script");
       s.src = src;
+      s.crossOrigin = "anonymous";
+      if (integrity) {
+        s.integrity = integrity;
+      }
       s.onload = resolve;
       s.onerror = reject;
       document.head.appendChild(s);
@@ -27,8 +39,10 @@
   function loadFirebaseCompatSdk() {
     const base =
       "https://www.gstatic.com/firebasejs/" + FIREBASE_SDK_VERSION + "/";
-    return loadScript(base + "firebase-app-compat.js").then(function () {
-      return loadScript(base + "firebase-messaging-compat.js");
+    const appFile = "firebase-app-compat.js";
+    const msgFile = "firebase-messaging-compat.js";
+    return loadScript(base + appFile, FIREBASE_SRI[appFile]).then(function () {
+      return loadScript(base + msgFile, FIREBASE_SRI[msgFile]);
     });
   }
 

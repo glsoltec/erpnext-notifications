@@ -67,14 +67,31 @@ Reinicie os processos (`bench restart`) e force o recarregamento do desk.
 
 ## Uso programático
 
+> **Autorização:** `send_notification` exige o papel **System Manager** e método **POST**.
+> O auto-atendimento de dispositivos (`register_device`/`unregister_device`/`get_my_devices`)
+> é restrito à própria sessão do usuário.
+
 ```python
-# Enviar para um usuário
+# Enviar para um usuário (System Manager + POST)
 frappe.call("erpnext_notifications.api.send_notification", {
     "recipients": "user@empresa.com.br",
     "title": "Pedido aprovado",
     "body": "Seu pedido foi aprovado.",
 })
 ```
+
+## Segurança
+
+- Endpoints mutáveis aceitam somente **POST** (mitiga CSRF/GET com efeito colateral).
+- `register_device` não permite reatribuir um token de outro usuário.
+- Os DocTypes `FCM Device` e `FCM Notification Log` são acessíveis apenas a
+  **System Manager**; usuários gerenciam os próprios dispositivos via API.
+- O service account do Firebase é exposto apenas a **System Manager**
+  (`get_service_account` valida o papel no servidor).
+- O SDK do Firebase é carregado com **SRI** no loader da página; o service worker
+  usa versão fixada (10.8.0) — veja nota em `www/sw.js`.
+- O `.gitignore` protege service accounts (`*firebase-adminsdk*.json`). Não
+  commitar arquivos de credencial.
 
 ## Contribuindo
 
