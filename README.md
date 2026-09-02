@@ -105,6 +105,11 @@ Never commit this JSON, send it through chat, or place it in a public repository
 The `.gitignore` excludes common Firebase service-account filenames, but secrets
 must still be handled by the deployment team.
 
+If the service-account JSON is exposed in any way (logs, console output, chat,
+repository), **rotate the Firebase service account** by generating a new private
+key in the Firebase Console and updating `FCM Settings`. Treat the private key as
+a credential that grants message-sending rights for the project.
+
 ### Web/PWA Configuration
 
 In Firebase:
@@ -173,9 +178,36 @@ modern browsers may ignore automatic permission requests made during page load.
 
 ### Web/PWA Settings
 
-- **Habilitar push no navegador**
-- **Firebase Web Config**
-- **VAPID Public Key**
+- **Habilitar push no navegador** (`enable_fcm`): must be enabled for the browser
+  registration flow. The web JavaScript calls `get_web_config`, which throws when
+  this option is off, so the enable button and device registration do not run.
+- **Firebase Web Config**: the Web app configuration as **valid JSON**. Keys must
+  use double quotes. A JavaScript object literal such as
+  `{ apiKey: "..." }` is not accepted and breaks `json.loads`.
+- **VAPID Public Key**: the public Web Push certificate key.
+
+Example of a valid **Firebase Web Config** (placeholders only):
+
+```json
+{
+  "apiKey": "API_KEY_AQUI",
+  "authDomain": "projeto.firebaseapp.com",
+  "projectId": "projeto-firebase",
+  "storageBucket": "projeto.firebasestorage.app",
+  "messagingSenderId": "SENDER_ID_AQUI",
+  "appId": "APP_ID_AQUI"
+}
+```
+
+If the saved Web Config is invalid JSON, `get_web_config` returns an error and the
+browser cannot register. Use **Testar conexão** and the browser console to confirm
+there are no Firebase JSON errors.
+
+> Note: a notification is delivered only when the recipient has at least one
+> **active registered device** in `FCM Device`. A successful `send` call with
+> `tokens: 0` means the target user has no device registered; the user must enable
+> browser push (or a native client must register its token) before the message can
+> be delivered.
 
 ### PWA Settings
 
