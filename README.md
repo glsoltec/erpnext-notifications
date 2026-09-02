@@ -143,6 +143,10 @@ The Web Config values are client-side Firebase configuration values and are not 
 replacement for the private service-account JSON. Confirm that the Web Config
 `projectId` and service-account project are the same.
 
+After loading the Desk, click **Ativar notificações** when the button appears.
+The browser permission request is intentionally triggered by this user action;
+modern browsers may ignore automatic permission requests made during page load.
+
 ### Browser Requirements
 
 - The ERPNext site must use HTTPS.
@@ -393,6 +397,11 @@ Check:
 - service workers are allowed;
 - the browser console has no CSP or Firebase errors;
 - `/manifest.json` and `/sw.js` return HTTP 200.
+
+If the browser permission was previously denied, open the site permissions for
+the ERPNext origin, reset **Notifications** to **Ask** or **Allow**, reload the
+Desk and click **Ativar notificações**. The prompt is not shown again while the
+permission remains denied.
 
 ### Notification is queued but not delivered
 
