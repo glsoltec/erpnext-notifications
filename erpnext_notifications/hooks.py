@@ -73,3 +73,5 @@ scheduler_events = {
 # Alteracoes de schema (Fixtures/Print) e translacao
 # ---------------------------------------------------------------------------
 fixtures = []
+
+after_migrate = "erpnext_notifications.setup.after_migrate"
