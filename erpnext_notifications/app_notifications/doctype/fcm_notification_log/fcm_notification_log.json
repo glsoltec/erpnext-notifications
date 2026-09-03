@@ -48,7 +48,8 @@
     {
       "fieldname": "token",
       "fieldtype": "Data",
-      "label": "Token FCM"
+      "label": "Token FCM",
+      "length": 1500
     },
     {
       "fieldname": "data_payload",
