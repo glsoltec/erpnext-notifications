@@ -1,1 +1,2 @@
 erpnext_notifications.patches.add_fcm_shortcut_to_build
+erpnext_notifications.patches.add_fcm_desktop_icon
