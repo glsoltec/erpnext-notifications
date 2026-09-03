@@ -17,7 +17,7 @@ def execute():
             "name": ICON_NAME,
             "label": ICON_NAME,
             "app": "erpnext_notifications",
-            "icon_type": "DocType",
+            "icon_type": "Link",
             "link_type": "DocType",
             "link_to": ICON_NAME,
             "parent_icon": PARENT_ICON,
