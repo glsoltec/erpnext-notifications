@@ -42,8 +42,27 @@ doc_events = {
         "on_submit": "erpnext_notifications.methods.handle_doc_event",
         "on_cancel": "erpnext_notifications.methods.handle_doc_event",
     },
+    "Sales Order": {
+        "on_submit": "erpnext_notifications.methods.handle_doc_event",
+        "on_cancel": "erpnext_notifications.methods.handle_doc_event",
+    },
+    "Purchase Order": {
+        "on_submit": "erpnext_notifications.methods.handle_doc_event",
+        "on_cancel": "erpnext_notifications.methods.handle_doc_event",
+    },
+    "Payment Entry": {
+        "on_submit": "erpnext_notifications.methods.handle_doc_event",
+    },
+    "Journal Entry": {
+        "on_submit": "erpnext_notifications.methods.handle_doc_event",
+    },
+    "Expense Claim": {
+        "on_submit": "erpnext_notifications.methods.handle_doc_event",
+    },
     "Leave Application": {
         "on_update": "erpnext_notifications.methods.handle_doc_event",
+        "on_submit": "erpnext_notifications.methods.handle_doc_event",
+        "on_cancel": "erpnext_notifications.methods.handle_doc_event",
     },
     "Issue": {
         "after_insert": "erpnext_notifications.methods.handle_doc_event",
@@ -66,6 +85,7 @@ scheduler_events = {
     "daily": [
         "erpnext_notifications.scheduler.cleanup_old_logs",
         "erpnext_notifications.scheduler.cleanup_invalid_devices",
+        "erpnext_notifications.scheduler.cleanup_old_devices",
     ],
 }
 

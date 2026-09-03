@@ -139,3 +139,21 @@ def cleanup_invalid_devices():
             doc.deactivate(reason="Token invalido persistente")
         except Exception:
             frappe.log_error(frappe.get_traceback(), "FCM: limpeza de dispositivo")
+
+
+def cleanup_old_devices():
+    """Desativa dispositivos sem atividade por mais de N dias (tokens orfaos)."""
+    days = frappe.db.get_single_value("FCM Settings", "device_retention_days") or 30
+    cutoff = frappe.utils.add_days(frappe.utils.now_datetime(), -days)
+    stale = frappe.get_all(
+        "FCM Device",
+        filters={"is_active": 1, "last_seen": ["<", cutoff]},
+        pluck="name",
+        limit=_get_retry_limit(),
+    )
+    for name in stale:
+        try:
+            doc = frappe.get_doc("FCM Device", name)
+            doc.deactivate(reason="Sem atividade por mais de %s dias" % days)
+        except Exception:
+            frappe.log_error(frappe.get_traceback(), "FCM: limpeza de dispositivo ocioso")

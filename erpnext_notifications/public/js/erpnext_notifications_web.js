@@ -111,14 +111,18 @@
       return;
     }
     const d = payload.data || {};
-    const title = d.title || "Notificação";
-    const options = { body: d.body || "" };
-    if (d.notification_icon) {
-      options.icon = d.notification_icon;
+    const n = payload.notification || {};
+    const title = d.title || n.title || "Notificação";
+    const options = { body: d.body || n.body || "" };
+    if (n.icon || d.notification_icon) {
+      options.icon = n.icon || d.notification_icon;
     }
-    const n = new Notification(title, options);
+    if (n.image || d.notification_image) {
+      options.image = n.image || d.notification_image;
+    }
+    const notification = new Notification(title, options);
     if (d.click_action) {
-      n.onclick = function () {
+      notification.onclick = function () {
         window.open(d.click_action, "_blank");
       };
     }

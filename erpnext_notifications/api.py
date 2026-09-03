@@ -8,6 +8,7 @@ from frappe import _
 
 from erpnext_notifications import services
 from erpnext_notifications.validation import (
+    _detect_device_type,
     _validate_token_format,
     mask_token,
     normalize_recipients,
@@ -63,7 +64,7 @@ def register_device(
         {
             "user": frappe.session.user,
             "token": token,
-            "device_type": device_type or "Android",
+            "device_type": _detect_device_type(user_agent=user_agent, device_type=device_type),
             "app_version": app_version,
             "user_agent": user_agent,
             "is_active": 1,
@@ -206,3 +207,21 @@ def test_connection() -> dict:
         "project_id": project_id,
         "token_issued": bool(token),
     }
+
+
+@frappe.whitelist()
+def send_test_notification() -> dict:
+    """Envia uma notificacao de teste para o usuario logado (valida todo o fluxo)."""
+    _require_post()
+    user = frappe.session.user
+    if not user or user == "Guest":
+        frappe.throw(_("Autenticacao necessaria para testar envio."), exc_class=frappe.PermissionError)
+
+    out = services.send_to_user(
+        user,
+        title=_("Teste de Notificacao"),
+        body=_("Esta e uma notificacao de teste enviada de FCM Settings."),
+        data={"type": "test", "source": "fcm_settings"},
+        enqueue=False,
+    )
+    return {"status": "sent", "user": user, "sent": out.get("sent", 0), "tokens": out.get("tokens", 0)}

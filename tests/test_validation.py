@@ -1,6 +1,7 @@
 import unittest
 
 from erpnext_notifications.validation import (
+    _detect_device_type,
     is_transient_error,
     mask_token,
     next_retry_at,
@@ -105,6 +106,27 @@ class TestRetry(unittest.TestCase):
     def test_transient(self):
         self.assertTrue(is_transient_error(503))
         self.assertFalse(is_transient_error(400))
+
+
+class TestDetectDeviceType(unittest.TestCase):
+    def test_explicit_wins(self):
+        self.assertEqual(_detect_device_type(device_type="Web"), "Web")
+        self.assertEqual(_detect_device_type(device_type="Android"), "Android")
+
+    def test_android_ua(self):
+        self.assertEqual(_detect_device_type(user_agent="Dalvik/2.1 (Android)"), "Android")
+
+    def test_ios_ua(self):
+        self.assertEqual(
+            _detect_device_type(user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)"),
+            "iOS",
+        )
+
+    def test_unknown_defaults_android(self):
+        self.assertEqual(_detect_device_type(user_agent="curl/8.0"), "Android")
+
+    def test_invalid_explicit_falls_back(self):
+        self.assertEqual(_detect_device_type(user_agent="Android", device_type="WebBrowser"), "Android")
 
 
 if __name__ == "__main__":

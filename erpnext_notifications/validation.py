@@ -23,6 +23,23 @@ TRANSIENT_HTTP_CODES = {429, 500, 502, 503, 504}
 _URL_SCHEMES_ALLOWED = {"https"}
 
 
+def _detect_device_type(user_agent: str = "", device_type: str = "") -> str:
+    """Classifica o tipo de dispositivo a partir do user_agent/plataforma.
+
+    Prioridade: o `device_type` explicito (se for valido); caso contrario, infere
+    de um user_agent mobile. Evita que um token mobile fique registrado como 'Web'.
+    """
+    valid = {"Web", "Android", "iOS"}
+    if device_type and device_type in valid:
+        return device_type
+    ua = (user_agent or "").lower()
+    if "android" in ua:
+        return "Android"
+    if any(k in ua for k in ("iphone", "ipad", "ios", "ipod")):
+        return "iOS"
+    return "Android"  # default da API de registro e "Android"
+
+
 def mask_token(token: str | None) -> str:
     """Mascara o token, exibindo apenas um sufixo curto.
 

@@ -9,6 +9,23 @@ from frappe.utils import get_url, strip_html
 from erpnext_notifications import services
 from erpnext_notifications.validation import safe_notification_url
 
+IDEMPOTENCY_TTL = 60  # segundos; evita envio duplicado do mesmo evento no mesmo documento
+
+
+def _idempotency_key(doc, method: str, rule_name: str) -> str:
+    return f"fcm:idem:{doc.doctype}:{doc.name}:{method}:{rule_name}"
+
+
+def _mark_dispatched(key: str) -> bool:
+    """Retorna True se o evento ja foi processado recentemente (e marca novo)."""
+    if frappe.local.flags.get(key):
+        return True
+    if frappe.cache.get(key):
+        return True
+    frappe.local.flags[key] = True
+    frappe.cache.set(key, True, expires_in_sec=IDEMPOTENCY_TTL)
+    return False
+
 
 def send_notification_log_push(doc, method=None):
     """Relay das notificacoes nativas do ERPNext (Notification Log) para push.
@@ -67,7 +84,7 @@ def handle_doc_event(doc, method: str):
 
     for rule in rules:
         try:
-            _dispatch_rule(doc, rule)
+            _dispatch_rule(doc, rule, method)
         except Exception:
             frappe.log_error(
                 frappe.get_traceback(),
@@ -75,7 +92,11 @@ def handle_doc_event(doc, method: str):
             )
 
 
-def _dispatch_rule(doc, rule):
+def _dispatch_rule(doc, rule, method: str):
+    key = _idempotency_key(doc, method, rule.name)
+    if _mark_dispatched(key):
+        return
+
     recipient = _resolve_recipient(doc, rule.recipient_field)
     if not recipient:
         return

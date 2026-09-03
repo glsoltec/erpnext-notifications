@@ -1,0 +1,28 @@
+{
+  "add_total_row": 0,
+  "columns": [],
+  "creation": "2026-09-02 00:00:00.000000",
+  "disable_prepared_report": 0,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "idx": 0,
+  "is_standard": "Yes",
+  "modified": "2026-09-02 00:00:00.000000",
+  "module": "App Notifications",
+  "name": "Notification Delivery Report",
+  "owner": "Administrator",
+  "prepared_report": 0,
+  "query": "SELECT\n    DATE(creation) AS `Data`,\n    user AS `Usuario`,\n    status AS `Status`,\n    COUNT(*) AS `Quantidade`\nFROM `tabFCM Notification Log`\nWHERE DATE(creation) >= %(from_date)s\n  AND DATE(creation) <= %(to_date)s\nGROUP BY DATE(creation), user, status\nORDER BY `Data` DESC, user;\n",
+  "ref_doctype": "FCM Notification Log",
+  "report_name": "Notification Delivery Report",
+  "report_type": "Query Report",
+  "roles": [
+    {
+      "parent": "Notification Delivery Report",
+      "parentfield": "roles",
+      "parenttype": "Report",
+      "role": "System Manager"
+    }
+  ]
+}

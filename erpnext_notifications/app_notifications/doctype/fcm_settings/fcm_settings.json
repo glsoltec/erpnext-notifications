@@ -13,6 +13,7 @@
     "log_enabled",
     "auto_remove_invalid",
     "retention_days",
+    "device_retention_days",
     "sb_web",
     "enable_fcm",
     "fcm_web_config",
@@ -89,6 +90,13 @@
       "fieldtype": "Int",
       "label": "Retenção de logs (dias)",
       "default": "90"
+    },
+    {
+      "fieldname": "device_retention_days",
+      "fieldtype": "Int",
+      "label": "Retenção de dispositivos (dias)",
+      "default": 30,
+      "description": "Desativa dispositivos sem atividade por mais de N dias."
     },
     {
       "fieldname": "sb_web",

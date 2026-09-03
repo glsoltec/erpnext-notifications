@@ -23,5 +23,34 @@ frappe.ui.form.on("FCM Settings", {
       },
       __("Firebase"),
     );
+
+    frm.add_custom_button(
+      __("Enviar notificação de teste"),
+      function () {
+        frappe.call({
+          method: "erpnext_notifications.api.send_test_notification",
+          callback: function (r) {
+            if (r.message && r.message.status === "sent") {
+              frappe.msgprint(
+                __(
+                  "Notificação de teste enviada para {0} ({1} dispositivo(s)).",
+                  [r.message.user, r.message.sent],
+                ),
+              );
+            } else {
+              frappe.msgprint(
+                __(r.message || "Nenhum dispositivo recebeu a notificação."),
+              );
+            }
+          },
+          error: function (r) {
+            frappe.msgprint(
+              __(r.message || "Falha ao enviar notificação de teste."),
+            );
+          },
+        });
+      },
+      __("Firebase"),
+    );
   },
 });
