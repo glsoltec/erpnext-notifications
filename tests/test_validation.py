@@ -6,6 +6,7 @@ from erpnext_notifications.validation import (
     mask_token,
     next_retry_at,
     normalize_recipients,
+    safe_manifest_path,
     safe_notification_url,
     validate_payload,
 )
@@ -83,6 +84,26 @@ class TestSafeUrl(unittest.TestCase):
 
     def test_none(self):
         self.assertIsNone(safe_notification_url(None))
+
+
+class TestSafeManifestPath(unittest.TestCase):
+    def test_relative(self):
+        self.assertEqual(safe_manifest_path("/app", "/app"), "/app")
+
+    def test_https_ok(self):
+        self.assertEqual(safe_manifest_path("https://erpnext.glsoltec.com.br/app", "/app"), "https://erpnext.glsoltec.com.br/app")
+
+    def test_http_rejected(self):
+        self.assertEqual(safe_manifest_path("http://evil.com", "/app"), "/app")
+
+    def test_script_rejected(self):
+        self.assertEqual(safe_manifest_path("javascript:alert(1)", "/app"), "/app")
+
+    def test_empty_uses_default(self):
+        self.assertEqual(safe_manifest_path("", "/app"), "/app")
+
+    def test_none_uses_default(self):
+        self.assertEqual(safe_manifest_path(None, "/app"), "/app")
 
 
 class TestMaskToken(unittest.TestCase):

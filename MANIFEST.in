@@ -1,4 +1,5 @@
 include README.md
 include LICENSE
 include license.txt
+include requirements.txt
 recursive-include erpnext_notifications *.json *.js *.py

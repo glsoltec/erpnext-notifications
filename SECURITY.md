@@ -25,6 +25,12 @@ report. Rotate any credential that may have been exposed.
 - Device tokens are scoped to the logged-in user and masked in list responses.
 - Invalid tokens are not retried.
 - Firebase service-account files are excluded from Git by `.gitignore`.
+- `send_test_notification` is rate-limited per user (3 requests/minute).
+- PWA `start_url` and `scope` in the manifest accept only relative paths or HTTPS
+  (unsafe values fall back to the default), reducing manifest-based phishing.
+- Event dispatch is idempotent within a short window (cache), avoiding duplicate
+  pushes for the same document event.
+- Runtime dependencies are pinned in `requirements.txt` (generated lockfile).
 
 ## Deployment requirements
 

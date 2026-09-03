@@ -2,6 +2,8 @@ import json
 
 import frappe
 
+from erpnext_notifications.validation import safe_manifest_path
+
 no_sitemap = 1
 
 
@@ -13,8 +15,8 @@ def get_context(context):
     context.app_description = s.manifest_description or ""
     context.theme_color = s.manifest_theme_color or "#2490EF"
     context.background_color = s.manifest_background_color or "#FFFFFF"
-    context.start_url = s.manifest_start_url or "/app"
-    context.app_scope = s.manifest_scope or "/"
+    context.start_url = safe_manifest_path(s.manifest_start_url, "/app")
+    context.app_scope = safe_manifest_path(s.manifest_scope, "/")
     context.display = s.manifest_display or "standalone"
     context.orientation = s.manifest_orientation or "portrait"
     context.lang = "pt-BR"

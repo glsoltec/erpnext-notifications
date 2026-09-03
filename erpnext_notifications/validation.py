@@ -129,6 +129,24 @@ def safe_notification_url(url: str | None) -> str | None:
     return None
 
 
+def safe_manifest_path(value: str | None, default: str) -> str:
+    """Aceita apenas caminho relativo ('/...') ou URL https; caso contrario usa default.
+
+    Evita que `start_url`/`scope` do manifest aponte para host externo (phishing).
+    """
+    if not value:
+        return default
+    value = value.strip()
+    if value.startswith("/"):
+        return value
+    if value.startswith("https://") or value.startswith("http://"):
+        # permite apenas https; http externo e rejeitado
+        if value.startswith("https://"):
+            return value
+        return default
+    return default
+
+
 def normalize_recipients(recipients) -> list[str]:
     """Normaliza uma lista de destinatarios (strings de usuario).
 

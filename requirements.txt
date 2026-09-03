@@ -1,0 +1,11 @@
+# Lockfile de dependencias gerado a partir de pyproject.toml
+# Frameworks: Frappe/ERPNext 16.x (Python >=3.10)
+# Regenerar com: pip freeze (apos resolver google-auth + requests)
+certifi==2026.7.22
+charset-normalizer==3.5.1
+google-auth==2.57.0
+idna==3.19
+pyasn1==0.6.4
+pyasn1_modules==0.4.2
+requests==2.34.2
+urllib3==2.7.0

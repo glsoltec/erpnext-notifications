@@ -26,6 +26,22 @@ def _require_post():
         frappe.throw(_("Metodo HTTP nao permitido. Use POST."), exc_class=frappe.PermissionError)
 
 
+def _rate_limit(key: str, limit: int, window_seconds: int = 60):
+    """Limita chamadas por janela de tempo usando o Redis (frappe.cache)."""
+    import time
+
+    redis_key = f"fcm:rl:{key}"
+    now = int(time.time())
+    bucket = int(now // window_seconds)
+    counter_key = f"{redis_key}:{bucket}"
+
+    count = frappe.cache.get(counter_key) or 0
+    if count >= limit:
+        frappe.throw(_("Limite de tentativas excedido. Tente novamente em instantes."), exc_class=frappe.PermissionError)
+
+    frappe.cache.set(counter_key, count + 1, expires_in_sec=window_seconds + 5)
+
+
 # ---------------------------------------------------------------------------
 # Registro / gerenciamento de dispositivos (chamado pelo app mobile / web)
 # ---------------------------------------------------------------------------
@@ -216,6 +232,8 @@ def send_test_notification() -> dict:
     user = frappe.session.user
     if not user or user == "Guest":
         frappe.throw(_("Autenticacao necessaria para testar envio."), exc_class=frappe.PermissionError)
+
+    _rate_limit(f"send_test:{user}", limit=3, window_seconds=60)
 
     out = services.send_to_user(
         user,
