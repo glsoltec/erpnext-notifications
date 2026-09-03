@@ -34,7 +34,7 @@
       "fieldname": "token",
       "fieldtype": "Data",
       "label": "Token FCM",
-      "length": 1500,
+      "length": 1000,
       "reqd": 1,
       "unique": 1,
       "in_list_view": 1
