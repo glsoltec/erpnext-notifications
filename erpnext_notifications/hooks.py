@@ -17,7 +17,7 @@ required_apps = ["frappe", "erpnext"]
 # Permissoes de acesso a pacotes
 # ---------------------------------------------------------------------------
 app_include_js = [
-    "erpnext_notifications_web.js",
+    "/assets/erpnext_notifications/js/erpnext_notifications_web.js",
 ]
 
 # ---------------------------------------------------------------------------
